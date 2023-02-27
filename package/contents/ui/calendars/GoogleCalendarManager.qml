@@ -199,6 +199,10 @@ CalendarManager {
 				"Authorization": "Bearer " + args.accessToken,
 			}
 		}, function(err, data, xhr) {
+            logger.debug('TEST -------------------------------')
+            data.items = data.items.filter(item => (
+                !item.attendees.some(att => att.self && att.responseStatus == "declined")
+            ))
 			logger.debug('fetchGCalEventsPage.response', args.calendarId, err, data, xhr.status)
 			if (!err && data && data.error) {
 				return pageCallback(data, null, xhr)

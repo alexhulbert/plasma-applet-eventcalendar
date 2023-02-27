@@ -13,6 +13,9 @@ QtObject {
 		args.sound = args.sound || args.soundFile
 
 		var cmd = [
+            'distrobox-enter',
+            'arch',
+            '--',
 			'python3',
 			plasmoid.file("", "scripts/notification.py"),
 		]
@@ -38,11 +41,13 @@ QtObject {
 			}
 		}
 		cmd.push('--metadata', '' + Date.now())
-		var sanitizedSummary = executable.sanitizeString(args.summary)
-		var sanitizedBody = executable.sanitizeString(args.body)
+		var sanitizedSummary = '"' + executable.sanitizeString(args.summary) + '"'
+		var sanitizedBody = '"' + executable.sanitizeString(args.body) + '"'
 		cmd.push(sanitizedSummary)
 		cmd.push(sanitizedBody)
+        logger.debugJSON('NOTIFY', cmd)
 		executable.exec(cmd, function(cmd, exitCode, exitStatus, stdout, stderr) {
+            logger.debugJSON('NOTIFY2', stderr)
 			var actionId = stdout.replace('\n', ' ').trim()
 			if (typeof callback === 'function') {
 				callback(actionId)
